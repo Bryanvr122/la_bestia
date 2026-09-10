@@ -79,4 +79,5 @@ def webhook_receiver():
 def index_check():
     return "=== [NEXUS ALFA V7.0] TOYOTA AVALON INMORTAL ACTIVO EN RENDER ==="
 if __name__ == "__main__":
-    app.run(port=5000)
+    app.run(port=10000)
+
