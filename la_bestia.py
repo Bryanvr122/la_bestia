@@ -68,9 +68,6 @@ def webhook_receiver():
             return jsonify({"status": "executed", "action": action}), 200
         else:
             return jsonify({"status": "failed_at_broker"}), 500
-        else:
-            print("🚨 ACCESO DENEGADO: Clave secreta inválida.", flush=True)
-            return jsonify({"status": "unauthorized"}), 401
     except Exception as e:
         print(f"💥 Error interno procesando el paquete: {e}", flush=True)
         return jsonify({"status": "error", "message": str(e)}), 500
