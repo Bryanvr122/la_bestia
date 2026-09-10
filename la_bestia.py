@@ -58,11 +58,11 @@ def webhook_receiver():
             print(f">>> CRUCE CONFIRMADO EN RADAR TRADINGVIEW: {action.upper()} <<<", flush=True)
             
         if action == "buy":
-                exito = place_order_institutional(UNITS_FIXED)
+            exito = place_order_institutional(UNITS_FIXED)
         elif action == "sell":
-                exito = place_order_institutional(-UNITS_FIXED)
+            exito = place_order_institutional(-UNITS_FIXED)
         else:
-                return jsonify({"status": "ignored", "reason": "unknown_action"}), 200
+            return jsonify({"status": "ignored", "reason": "unknown_action"}), 200
                 
         if exito:
             return jsonify({"status": "executed", "action": action}), 200
