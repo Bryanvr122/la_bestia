@@ -8,7 +8,7 @@ OANDA_ACCOUNT_ID = "001-001-21796206-001"
 OANDA_TOKEN = "66295f6389690cf5a35a01b1756f25ce-48eaead5b5487821fb87a7eeebdb355e"
 
 # ENDPOINT CRÍTICO OFICIAL DE LA API REST V20 VALIDADO POR GROK
-URL_ORDER = "https://api-fxpractice.oanda.com/v3/accounts/001-001-21796206-001/orders"
+f"{BASE_URL}/accounts/{OANDA_ACCOUNT_ID}/orders"/orders"
 
 app = Flask(__name__)
 
