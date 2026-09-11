@@ -8,10 +8,7 @@ OANDA_ACCOUNT_ID = "001-001-21796206-001"
 OANDA_TOKEN = "66295f6389690cf5a35a01b1756f25ce-48eaead5b5487821fb87a7eeebdb355e"
 
 # ENDPOINT CRÍTICO OFICIAL DE LA API REST V20 VALIDADO POR GROK
-BASE_URL = "https://api-fxpractice.oanda.com/v3"
-URL_ORDER = f"{BASE_URL}/accounts/{OANDA_ACCOUNT_ID}/orders"
-
-app = Flask(__name__)
+URL_ORDER = f"https://api-fxpractice.oanda.com/v3/accounts/{OANDA_ACCOUNT_ID}/orders" = Flask(__name__)
 
 # SESIÓN PERSISTENTE CORPORATIVA PARA SEPARAR EL TRÁFICO DE LA WEB COMERCIAL
 session = requests.Session()
