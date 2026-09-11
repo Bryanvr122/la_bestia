@@ -1,6 +1,6 @@
 import json
 import requests
-from flask import flask, request, jsonify
+from flask import Flask, request, jsonify
 
 INSTRUMENT = "GBP_USD"
 UNITS_FIXED = 1000
