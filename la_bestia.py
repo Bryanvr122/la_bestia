@@ -47,7 +47,6 @@ def place_order_institutional(units):
     except Exception as e:
         print(f"❌ Error crítico de red conectando con el endpoint de OANDA: {e}", flush=True)
         return False
-app : Flask(__name__)
 
 @app.route('/webhook', methods=['POST'])
 @app.route('/webhook/', methods=['POST'])
