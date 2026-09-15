@@ -25,8 +25,8 @@ def place_order_institutional(units):
             "timeInForce": "FOK",
             "type": "MARKET",
             "positionFill": "DEFAULT",
-            "stopLossOnFill": {"distance": "40"},
-            "takeProfitOnFill": {"distance": "80"}
+            "stopLossOnFill": {"distance": "100"},
+            "takeProfitOnFill": {"distance": "200"}
         }
     }
     try:
@@ -52,7 +52,7 @@ def webhook_receiver():
         if action == "buy":
             try:
                 session.put(URL_CLOSE, json={"longUnits": "ALL", "shortUnits": "ALL"}, timeout=8)
-                time.sleep(1.5)
+                time.sleep(3)
             except:
                 pass
             exito = place_order_institutional(UNITS_FIXED)
