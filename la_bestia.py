@@ -1,29 +1,24 @@
 import json
 import requests
+import time
 from flask import Flask, request, jsonify
 
 INSTRUMENT = "GBP_USD"
 UNITS_FIXED = 1000
 OANDA_ACCOUNT_ID = "101-001-39712262-001"
 OANDA_TOKEN = "33728560a92939721c3b7b63edcec0a9-85dd3a8804ed0de506f5b3fe11c5c199"
-
-# ENDPOINT CRÍTICO OFICIAL DE LA API REST V20 VALIDADO POR GROK
 URL_ORDER = f"https://api-fxpractice.oanda.com/v3/accounts/{OANDA_ACCOUNT_ID}/orders"
+URL_CLOSE = f"https://api-fxpractice.oanda.com/v3/accounts/{OANDA_ACCOUNT_ID}/positions/{INSTRUMENT}/close"
 
-app  =  Flask(__name__)
-
-# SESIÓN PERSISTENTE CORPORATIVA PARA SEPARAR EL TRÁFICO DE LA WEB COMERCIAL
+app = Flask(__name__)
 session = requests.Session()
 session.headers.update({
     "Authorization": f"Bearer {OANDA_TOKEN}",
-    "Content-Type": "application/json",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    "Accept": "application/json",
-    "Connection": "keep-alive"
+    "Content-Type": "application/json"
 })
 
 def place_order_institutional(units):
-        payload = {
+    payload = {
         "order": {
             "units": str(units),
             "instrument": INSTRUMENT,
@@ -35,57 +30,54 @@ def place_order_institutional(units):
         }
     }
     try:
-        print(f"[TRANSMISIÓN] Enviando orden lineal a OANDA por canal de API oficial...", flush=True)
-        res = session.post(URL_ORDER, json=payload, timeout=8)
-        print(f"[TELEMETRÍA] Código de Respuesta del Bróker: {res.status_code}", flush=True)
-        print(f"[TELEMETRÍA] Respuesta Cruda: {res.text[:200]}", flush=True)
-        
-        if res.status_code == 201:
-            print(">>>>> TARGET ENGAGED: ÓRDEN EJECUTADA EXITOSAMENTE <<<<<", flush=True)
-            return True
-        else:
-            print(f"⚠️ OANDA RECHAZÓ LA SOLICITUD: {res.text}", flush=True)
-            return False
+        print(f"[TRANSMISIÓN] Enviando {units}...", flush=True)
+        res = session.post(URL_ORDER, json=payload, timeout=10)
+        print(f"[TELEMETRÍA] {res.status_code} {res.text[:300]}", flush=True)
+        return res.status_code == 201
     except Exception as e:
-        print(f"❌ Error crítico de red conectando con el endpoint de OANDA: {e}", flush=True)
+        print(f"❌ Error: {e}", flush=True)
         return False
 
 @app.route('/webhook', methods=['POST'])
 @app.route('/webhook/', methods=['POST'])
 def webhook_receiver():
     try:
-        data = request.get_json(force=True)
-        if data.get("secret") == "NEXUS_ALFA_99X":
-            action = data.get("action")
-            print(f">>> CRUCE CONFIRMADO EN RADAR TRADINGVIEW: {action.upper()} <<<", flush=True)
-            
-            payload = {
-        "order": {
-            "units": str(units),
-            "instrument": INSTRUMENT,
-            "timeInForce": "FOK",
-            "type": "MARKET",
-            "positionFill": "DEFAULT",
-            "stopLossOnFill": {"distance": "40"},
-            "takeProfitOnFill": {"distance": "80"}
-        }
-    }
+        data = request.get_json(force=True, silent=True) or {}
+        if data.get("secret") != "NEXUS_ALFA_99X":
+            return jsonify({"status": "unauthorized"}), 401
+        
+        action = (data.get("action") or "").lower()
+        print(f">>> CRUCE: {action.upper()} <<<", flush=True)
+
+        if action == "buy":
+            try:
+                session.put(URL_CLOSE, json={"longUnits": "ALL", "shortUnits": "ALL"}, timeout=8)
+                time.sleep(1.5)
+            except:
+                pass
+            exito = place_order_institutional(UNITS_FIXED)
         elif action == "sell":
+            try:
+                session.put(URL_CLOSE, json={"longUnits": "ALL", "shortUnits": "ALL"}, timeout=8)
+                time.sleep(1.5)
+            except:
+                pass
             exito = place_order_institutional(-UNITS_FIXED)
         else:
-            return jsonify({"status": "ignored", "reason": "unknown_action"}), 200
-                
+            return jsonify({"status": "ignored"}), 200
+
         if exito:
             return jsonify({"status": "executed", "action": action}), 200
         else:
-            return jsonify({"status": "failed_at_broker"}), 500
+            return jsonify({"status": "failed_at_broker"}), 502
+
     except Exception as e:
-        print(f"💥 Error interno procesando el paquete: {e}", flush=True)
+        print(f"💥 Error: {e}", flush=True)
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/', methods=['GET'])
 def index_check():
-    return "=== [NEXUS ALFA V7.0] TOYOTA AVALON INMORTAL ACTIVO EN RENDER ==="
-if __name__ == "__main__":
-    app.run(port=10000)
+    return "=== [NEXUS ALFA V8.2 FIX] ACTIVO ==="
 
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
