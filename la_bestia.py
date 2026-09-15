@@ -19,19 +19,41 @@ session.headers.update({
 
 def place_order_institutional(units):
     payload = {
-  "order": {
-    "units": str(units),
-    "instrument": INSTRUMENT,
-    "timeInForce": "FOK",
-    "type": "MARKET",
-    "positionFill": "DEFAULT"
-  }
-}
+        "order": {
+            "units": str(units),
+            "instrument": INSTRUMENT,
+            "timeInForce": "FOK",
+            "type": "MARKET",
+            "positionFill": "DEFAULT"
+        }
+    }
     try:
         print(f"[TRANSMISIÓN] Enviando {units}...", flush=True)
         res = session.post(URL_ORDER, json=payload, timeout=10)
-        print(f"[TELEMETRÍA] {res.status_code} {res.text[:300]}", flush=True)
-        return res.status_code == 201
+        print(f"[TELEMETRÍA] {res.status_code} {res.text[:400]}", flush=True)
+
+        if res.status_code!= 201:
+            return False
+
+        # --- NUEVO: Ahora sí le pone el SL/TP ---
+        try:
+            data = res.json()
+            trade_id = data.get("orderFillTransaction", {}).get("tradeOpened", {}).get("tradeID")
+            if not trade_id:
+                # a veces viene en tradesOpened
+                trade_id = data.get("orderFillTransaction", {}).get("tradesOpened", [{}])[0].get("tradeID")
+
+            if trade_id:
+                sl_tp_payload = {
+                    "takeProfit": {"timeInForce": "GTC", "distance": "300"},
+                    "stopLoss": {"timeInForce": "GTC", "distance": "150"}
+                }
+                r2 = session.put(f"{OANDA_URL}/accounts/{ACCOUNT_ID}/trades/{trade_id}/orders", json=sl_tp_payload, timeout=10)
+                print(f"[SL/TP] Trade {trade_id} -> {r2.status_code} {r2.text[:400]}", flush=True)
+        except Exception as e:
+            print(f"[SL/TP Error] {e}", flush=True)
+
+        return True
     except Exception as e:
         print(f"❌ Error: {e}", flush=True)
         return False
