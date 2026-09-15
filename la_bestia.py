@@ -19,16 +19,14 @@ session.headers.update({
 
 def place_order_institutional(units):
     payload = {
-        "order": {
-            "units": str(units),
-            "instrument": INSTRUMENT,
-            "timeInForce": "FOK",
-            "type": "MARKET",
-            "positionFill": "DEFAULT",
-            "stopLossOnFill": {"distance": "100"},
-            "takeProfitOnFill": {"distance": "200"}
-        }
-    }
+  "order": {
+    "units": str(units),
+    "instrument": INSTRUMENT,
+    "timeInForce": "FOK",
+    "type": "MARKET",
+    "positionFill": "DEFAULT"
+  }
+}
     try:
         print(f"[TRANSMISIÓN] Enviando {units}...", flush=True)
         res = session.post(URL_ORDER, json=payload, timeout=10)
