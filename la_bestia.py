@@ -23,13 +23,15 @@ session.headers.update({
 })
 
 def place_order_institutional(units):
-    payload = {
+        payload = {
         "order": {
             "units": str(units),
             "instrument": INSTRUMENT,
             "timeInForce": "FOK",
             "type": "MARKET",
-            "positionFill": "DEFAULT"
+            "positionFill": "DEFAULT",
+            "stopLossOnFill": {"distance": "40"},
+            "takeProfitOnFill": {"distance": "80"}
         }
     }
     try:
@@ -57,8 +59,17 @@ def webhook_receiver():
             action = data.get("action")
             print(f">>> CRUCE CONFIRMADO EN RADAR TRADINGVIEW: {action.upper()} <<<", flush=True)
             
-        if action == "buy":
-            exito = place_order_institutional(UNITS_FIXED)
+            payload = {
+        "order": {
+            "units": str(units),
+            "instrument": INSTRUMENT,
+            "timeInForce": "FOK",
+            "type": "MARKET",
+            "positionFill": "DEFAULT",
+            "stopLossOnFill": {"distance": "40"},
+            "takeProfitOnFill": {"distance": "80"}
+        }
+    }
         elif action == "sell":
             exito = place_order_institutional(-UNITS_FIXED)
         else:
