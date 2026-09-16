@@ -55,20 +55,20 @@ def webhook_receiver():
         if data.get("secret") != "NEXUS_ALFA_99X":
             return jsonify({"status": "unauthorized"}), 401
         
-            action = (data.get("action") or data.get("side") or data.get("cruce") or "").lower()
+        action = (data.get("action") or data.get("side") or data.get("cruce") or "").lower()
 
-    # Anti volteo loco - no aceptar otra señal en 20 minutos
-    try:
-        with open("/tmp/ultima.txt","r") as f:
-            ultima = float(f.read())
-            if time.time() - ultima < 1200:
-                print(f"[IGNORADO] Cooldown {int(1200 - (time.time()-ultima))}s", flush=True)
-                return jsonify({"status":"ignored","reason":"cooldown 20m"}), 200
-    except:
-        pass
+        # Anti volteo loco - no aceptar otra señal en 20 minutos
+        try:
+            with open("/tmp/ultima.txt","r") as f:
+                ultima = float(f.read())
+                if time.time() - ultima < 1200:
+                    print(f"[IGNORADO] Cooldown {int(1200 - (time.time()-ultima))}s", flush=True)
+                    return jsonify({"status":"ignored","reason":"cooldown 20m"}), 200
+        except:
+            pass
 
-    with open("/tmp/ultima.txt","w") as f:
-        f.write(str(time.time()))
+        with open("/tmp/ultima.txt","w") as f:
+            f.write(str(time.time()))
 
     print(f">>> CRUCE: {action.upper()} <<<", flush=True)
 
