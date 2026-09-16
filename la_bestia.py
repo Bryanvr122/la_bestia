@@ -98,17 +98,6 @@ def webhook_receiver():
         print(f"💥 Error: {e}", flush=True)
         return jsonify({"status": "error", "message": str(e)}), 500
 
-    if exito:
-        return jsonify({"status": "executed", "action": action}), 200
-    else:
-        return jsonify({"status": "failed_at_broker"}), 502
-
-except Exception as e:
-    print(f"💥 Error: {e}", flush=True)
-    return jsonify({"status": "error", "message": str(e)}), 500
-
-@app.route('/', methods=['GET'])
-
 @app.route('/', methods=['GET'])
 def index_check():
     return "=== [NEXUS ALFA V8.2 FIX] ACTIVO ==="
