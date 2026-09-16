@@ -62,9 +62,9 @@ def webhook_receiver():
             ultima = float(f.read())
             if time.time() - ultima < 1200: # 20 minutos
                 print(f"[IGNORADO] Cooldown {int(1200 - (time.time()-ultima))}s", flush=True)
-                return jsonify({"status":"ignored","reason":"cooldown 20m"}), 200
-except:
-    pass
+                return jsonify({"status":"ignored","reason":"cooldown 20m"}), 200.
+    except:
+        pass
 with open("/tmp/ultima.txt","w") as f:
     f.write(str(time.time()))
         print(f">>> CRUCE: {action.upper()} <<<", flush=True)
