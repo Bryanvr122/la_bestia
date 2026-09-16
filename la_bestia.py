@@ -56,7 +56,6 @@ def webhook_receiver():
             return jsonify({"status": "unauthorized"}), 401
         
         action = (data.get("action") or data.get("side") or data.get("cruce") or "").lower()
-import time
 # Anti volteo loco - no aceptar otra señal en 20 minutos
 try:
     with open("/tmp/ultima.txt","r") as f:
