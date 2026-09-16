@@ -27,10 +27,10 @@ def place_order_institutional(units):
             "type": "MARKET",
             "positionFill": "DEFAULT",
             "stopLossOnFill": {
-                "distance": "150"
+                "distance": "0.00150"
             },
             "takeProfitOnFill": {
-                "distance": "300"
+                "distance": "0.00300"
             }
         }
     }
