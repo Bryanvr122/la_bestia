@@ -27,10 +27,10 @@ def place_order_institutional(units):
             "type": "MARKET",
             "positionFill": "DEFAULT",
             "stopLossOnFill": {
-                "distance": "0.00150"
+                "distance": "0.00250"
             },
             "takeProfitOnFill": {
-                "distance": "0.00300"
+                "distance": "0.00500"
             }
         }
     }
@@ -56,18 +56,29 @@ def webhook_receiver():
             return jsonify({"status": "unauthorized"}), 401
         
         action = (data.get("action") or data.get("side") or data.get("cruce") or "").lower()
+import time
+# Anti volteo loco - no aceptar otra señal en 20 minutos
+try:
+    with open("/tmp/ultima.txt","r") as f:
+        ultima = float(f.read())
+        if time.time() - ultima < 1200: # 20 minutos
+            print(f"[IGNORADO] Cooldown {int(1200 - (time.time()-ultima))}s", flush=True)
+            return jsonify({"status":"ignored","reason":"cooldown 20m"}), 200
+except:
+    pass
+with open("/tmp/ultima.txt","w") as f:
+    f.write(str(time.time()))
         print(f">>> CRUCE: {action.upper()} <<<", flush=True)
-
-        if action == "buy":
-            try:
-                session.put(URL_CLOSE, json={"longUnits": "ALL", "shortUnits": "ALL"}, timeout=8)
-                time.sleep(3)
-            except:
-                pass
-            exito = place_order_institutional(UNITS_FIXED)
+if action == "buy":
+    try:
+        session.put(URL_CLOSE, json={"shortUnits": "ALL"}, timeout=8)
+        time.sleep(1)
+    except:
+        pass
+    exito = place_order_institutional(UNITS_FIXED)
         elif action == "sell":
             try:
-                session.put(URL_CLOSE, json={"longUnits": "ALL", "shortUnits": "ALL"}, timeout=8)
+                session.put(URL_CLOSE, json={"longUnits":
                 time.sleep(1.5)
             except:
                 pass
