@@ -54,7 +54,7 @@ def webhook_receiver():
         data = request.get_json(force=True, silent=True) or {}
         if data.get("secret") != "NEXUS_ALFA_99X":
             return jsonify({"status": "unauthorized"}), 401
-        
+
         action = (data.get("action") or data.get("side") or data.get("cruce") or "").lower()
 
         # Anti volteo loco - no aceptar otra señal en 20 minutos
@@ -70,29 +70,33 @@ def webhook_receiver():
         with open("/tmp/ultima.txt","w") as f:
             f.write(str(time.time()))
 
-    print(f">>> CRUCE: {action.upper()} <<<", flush=True)
+        print(f">>> CRUCE: {action.upper()} <<<", flush=True)
 
-    if action == "buy":
-        try:
-            session.put(URL_CLOSE, json={"shortUnits": "ALL"}, timeout=8)
-            time.sleep(1)
-        except:
-            pass
-        exito = place_order_institutional(UNITS_FIXED)
+        if action == "buy":
+            try:
+                session.put(URL_CLOSE, json={"shortUnits": "ALL"}, timeout=8)
+                time.sleep(1)
+            except:
+                pass
+            exito = place_order_institutional(UNITS_FIXED)
         elif action == "sell":
-        try:
-            session.put(URL_CLOSE, json={"longUnits": "ALL"}, timeout=8)
-            time.sleep(1.5)
-        except:
-            pass
-        exito = place_order_institutional(-UNITS_FIXED)
-    else:
-        return jsonify({"status": "ignored"}), 200
+            try:
+                session.put(URL_CLOSE, json={"longUnits": "ALL"}, timeout=8)
+                time.sleep(1.5)
+            except:
+                pass
+            exito = place_order_institutional(-UNITS_FIXED)
+        else:
+            return jsonify({"status": "ignored"}), 200
 
-    if exito:
-        return jsonify({"status": "executed", "action": action}), 200
-    else:
-        return jsonify({"status": "failed_at_broker"}), 502
+        if exito:
+            return jsonify({"status": "executed", "action": action}), 200
+        else:
+            return jsonify({"status": "failed_at_broker"}), 502
+
+    except Exception as e:
+        print(f"💥 Error: {e}", flush=True)
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 except Exception as e:
     print(f"💥 Error: {e}", flush=True)
