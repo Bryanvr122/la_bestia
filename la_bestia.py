@@ -53,7 +53,7 @@ def webhook_receiver():
     try:
         data = request.get_json(force=True, silent=True) or {}
         if data.get("secret") != "NEXUS_ALFA_99X":
-        return jsonify({"status": "unauthorized"}), 401
+            return jsonify({"status": "unauthorized"}), 401
 
         action = (data.get("action") or data.get("side") or data.get("cruce") or "").lower()
 
