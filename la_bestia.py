@@ -61,7 +61,7 @@ def webhook_receiver():
         try:
             with open("/tmp/ultima.txt","r") as f:
                 ultima = float(f.read())
-                if time.time() - ultima < 1200:
+            if time.time() - ultima < 1200:
                 print(f"[IGNORADO] Cooldown {int(1200 - (time.time()-ultima))}s", flush=True)
             return jsonify({"status":"ignored","reason":"cooldown 20m"}), 200
         except FileNotFoundError:
