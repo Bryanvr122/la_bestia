@@ -3,7 +3,7 @@ import requests
 import time
 from flask import Flask, request, jsonify
 
-INSTRUMENT = "USD_CAD"
+INSTRUMENT = "GBP_JPY"
 UNITS_FIXED = 1000
 OANDA_ACCOUNT_ID = "101-001-39712262-001"
 OANDA_TOKEN = "33728560a92939721c3b7b63edcec0a9-85dd3a8804ed0de506f5b3fe11c5c199"
@@ -27,10 +27,10 @@ def place_order_institutional(units):
             "type": "MARKET",
             "positionFill": "DEFAULT",
             "stopLossOnFill": {
-                "distance": "0.00150"
+                "distance": "0.00350"
             },
             "takeProfitOnFill": {
-                "distance": "0.00500"
+                "distance": "0.00250"
             }
         }
     }
