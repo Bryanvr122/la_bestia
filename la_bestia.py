@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify
 INSTRUMENT = "USD_MXN"
 UNITS_FIXED = 1000
 OANDA_ACCOUNT_ID = "101-001-39712262-001"
-OANDA_TOKEN = "33728560a92939721c3b7b63edcec0a9-85dd3a8804ed0de506f5b3fe11c5c199"
+OANDA_TOKEN = "9ddad6dbe6f246949169ecd164a38157-baf6dfd5f96918930157b615004f97c4"
 OANDA_URL = "https://api-fxpractice.oanda.com"
 URL_ORDER = f"https://api-fxpractice.oanda.com/v3/accounts/{OANDA_ACCOUNT_ID}/orders"
 URL_CLOSE = f"https://api-fxpractice.oanda.com/v3/accounts/{OANDA_ACCOUNT_ID}/positions/{INSTRUMENT}/close"
