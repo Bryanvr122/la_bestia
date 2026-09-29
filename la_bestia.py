@@ -3,7 +3,7 @@ import requests
 import time
 from flask import Flask, request, jsonify
 
-INSTRUMENT = "USD_MXN"
+INSTRUMENT = "GBP_JPY"
 UNITS_FIXED = 2000
 OANDA_ACCOUNT_ID = "101-001-39712262-001"
 OANDA_TOKEN = "9ddad6dbe6f246949169ecd164a38157-baf6dfd5f96918930157b615004f97c4"
